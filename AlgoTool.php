@@ -44,6 +44,28 @@ class AlgoTool {
         return $node->m_up_ward_value;
     }
     
+    public static function countPriorityDownward($node) {
+        if($node->m_down_ward_value >= 0) {
+            return $node->m_down_ward_value;
+        }
+        
+        //printf("=======================正在计算 %d\n" , $node->m_index);
+        $max_value = 0;
+        $pre_edge_arr = $node->m_pre_edge_arr;
+        for($i = 0;$i < count($pre_edge_arr);$i++) {
+            $pre_edge = $pre_edge_arr[$i];
+            $pre_node = $pre_edge->m_succ_node;
+            $parent_cost = self::countPriorityDownward($pre_node);
+           // printf("xxxxx  孩子 : %d  cost: %d\n" , $succ_node->m_index , $succ_node->m_up_ward_value);
+            if($parent_cost + $pre_edge->m_cost > $max_value) {
+                $max_value = $parent_cost + $pre_edge->m_cost;
+            }
+        }
+        $node->m_down_ward_value = $max_value + $node->m_cost;
+        printf("现在输出节点 %d 的down： %d\n" , $node->m_index , $node->m_up_ward_value);
+        return $node->m_down_ward_value;
+    }
+    
     //将工作分配到处理机上
     public static function distributeNodesOnMachine($node_arr , $machine_arr) {
         //foreach ($node_arr as $node) {
@@ -123,7 +145,7 @@ class AlgoTool {
             }
         }
     }
-}
+}  
 
 function sortByUpwardValue($node_1 , $node_2) {
     return $node_1->m_up_ward_value > $node_2->m_up_ward_value?-1:1;
