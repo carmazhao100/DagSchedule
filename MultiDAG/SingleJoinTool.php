@@ -5,13 +5,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-require_once '../DataStructure/DAG.php';
-require_once '../DataStructure/Node.php';
-require_once '../DataStructure/Edge.php';
+require_once 'DataStructure/DAG.php';
+require_once 'DataStructure/Node.php';
+require_once 'DataStructure/Edge.php';
+require_once 'Machine/MachineManager.php';
 
 class SingleJoinTool {
-    //输入多个DAG输出一个连接DAG
-    public static function JoinDAGs_SimpleJoin($dag_arr) {
+    //输入多个DAG输出一个连接DAG,机器数
+    public static function joinDAGs_SimpleJoin($dag_arr , $mnumber) {
         $new_dag = new DAG();
         
         $entry_node = new Node();
@@ -69,7 +70,6 @@ class SingleJoinTool {
             for($m = 0;$m < count($node_arr);$m++) {
                 $tmp_node = $node_arr[$m];
                 $tmp_node->m_index = $index;
-                array_push($dag->m_node_arr, $tmp_node);
                 $new_dag->m_node_dic[$index] = $tmp_node;
                 $index++;
             }

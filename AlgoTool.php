@@ -51,7 +51,7 @@ class AlgoTool {
             }
         }
         $node->m_up_ward_value = $max_value + $node->m_cost;
-        printf("现在输出节点 %d 的upward： %d\n" , $node->m_index , $node->m_up_ward_value);
+        //printf("现在输出节点 %d 的upward： %d\n" , $node->m_index , $node->m_up_ward_value);
         return $node->m_up_ward_value;
     }
     
@@ -73,7 +73,7 @@ class AlgoTool {
             }
         }
         $node->m_down_ward_value = $max_value + $node->m_cost;
-        printf("现在输出节点 %d 的down： %d\n" , $node->m_index , $node->m_up_ward_value);
+        //printf("现在输出节点 %d 的down： %d\n" , $node->m_index , $node->m_up_ward_value);
         return $node->m_down_ward_value;
     }
     

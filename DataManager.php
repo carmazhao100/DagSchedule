@@ -72,7 +72,7 @@ class DataManager {
                     break;
             }
             
-            printf("当前level： %d  当前number： %d\n" ,$i ,  $current_level_number);
+           // printf("当前level： %d  当前number： %d\n" ,$i ,  $current_level_number);
             //清空数组 
             $current_node_arr = array();
             for($j = 0;$j < $current_level_number;$j++) {
@@ -84,7 +84,7 @@ class DataManager {
                 $node_number++;
                 $this->decorateNodeCostArray($new_node , $mnumber);
                 $new_dag->addNode($new_node->m_index, $new_node);
-                $new_node->showMe();
+                //$new_node->showMe();
                 //加入现役节点到当前层array
                 array_push($current_node_arr , $new_node);
 
@@ -93,11 +93,11 @@ class DataManager {
                 $pick_number = rand(1 , $pre_node_number);
                 $begin_pos = rand(0 , $pick_number);//在父节点数组中的开始位置,后面会取模
 
-                printf("供选择的父节点数目： %d\n" , $pick_number);
+                //printf("供选择的父节点数目： %d\n" , $pick_number);
                 //在上一层中
                 for($n = 0;$n < $pick_number;$n++) {
                     $index = ($n + $begin_pos)%$pre_node_number;
-                    printf("======选择了父节点 %d\n" , $index);
+                    //printf("======选择了父节点 %d\n" , $index);
                     $pre_node = $old_node_arr[$index];
                     //创建一条边
                     $new_edge = new Edge();
@@ -111,7 +111,7 @@ class DataManager {
                    // array_push($pre_node->getSuccNodes() , $new_node);
                     array_push($pre_node->m_succ_node_arr , $new_node);
                     array_push($pre_node->m_succ_edge_arr , $new_edge);
-                    printf("====此父节点拥有子节点数目： %d\n" , count($pre_node->m_succ_node_arr));
+                    //printf("====此父节点拥有子节点数目： %d\n" , count($pre_node->m_succ_node_arr));
                 }
             }
             
