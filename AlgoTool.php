@@ -3,7 +3,7 @@
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * and open the template in the editor
  */
 require_once 'DataStructure/Node.php';
 require_once 'DataStructure/Edge.php';
@@ -20,7 +20,18 @@ class AlgoTool {
         usort($value_arr, 'sortByUpwardValue');
         return $value_arr;
     }
-    
+    //输入DAG 返回CPOP的队列array
+    public static function signPriorityByCPOP($dag) {
+        $exit_node = $dag->m_exit_node;
+        //标注
+        self::countPriorityUpward($exit_node);
+        self::countPriorityDownward($exit_node);
+        $value_arr = array_values($dag->m_node_dic);
+        usort($value_arr, 'sortByCPOPValue');
+        return $value_arr;
+    }
+
+
     //递归调用计算upward
     public static function countPriorityUpward($node) {
         if($node->m_up_ward_value >= 0) {
@@ -71,55 +82,69 @@ class AlgoTool {
         //foreach ($node_arr as $node) {
         for($n = 0;$n < count($node_arr);$n++){
             $node = $node_arr[$n];
-            //找到合适的缝隙
-            $target_machine_id = 0;
-            $target_segment_id = 0;
-            $finish_time = MAX_TIME;
-            for ($i = 0;$i < count($machine_arr);$i++) {
-                $machine = $machine_arr[$i];
+            self::distributeSingleNodeOnMachine($node, $machine_arr);
+        }
+       
+        //检测代码
+        for($s = 0 ; $s < count($machine_arr);$s++) {
+            $machine = $machine_arr[$s];
+            printf("================= 机器  %d\n" , $s);
+            for($t = 0;$t < count($machine->m_node_arr);$t++) {
+                printf("拥有节点： %d\n" , $machine->m_node_arr[$t]->m_index);
+            }
+        }
+    }
+    //把工作分配到机器上
+    public static function distributeSingleNodeOnMachine($node , $machine_arr) {
+        //找到合适的缝隙
+        $target_machine_id = 0;
+        $target_segment_id = 0;
+        $finish_time = MAX_TIME;
+        for ($i = 0;$i < count($machine_arr);$i++) {
+            $machine = $machine_arr[$i];
                 //找到父节点们最晚结束时间，不在同一台机器上就加上传输边====================
-                $pre_node_finish_time = 0;
-                for($e = 0;$e < count($node->m_pre_edge_arr);$e++) {
-                    $pre_edge = $node->m_pre_edge_arr[$e];
-                    $f_t = 0;
-                    $pre_node = $pre_edge->m_pre_node;
-                    if($pre_node->m_machine_id == $i) {
-                        $f_t = $pre_node->m_finish_time;
-                    }else{
-                        $f_t = $pre_node->m_finish_time + $pre_edge->m_cost;
-                    }
-                    if($f_t > $pre_node_finish_time) {
-                        $pre_node_finish_time = $f_t;
-                    }
+            $pre_node_finish_time = 0;
+            for($e = 0;$e < count($node->m_pre_edge_arr);$e++) {
+                $pre_edge = $node->m_pre_edge_arr[$e];
+                $f_t = 0;
+                $pre_node = $pre_edge->m_pre_node;
+                if($pre_node->m_machine_id == $i) {
+                    $f_t = $pre_node->m_finish_time;
+                }else{
+                    $f_t = $pre_node->m_finish_time + $pre_edge->m_cost;
                 }
+                if($f_t > $pre_node_finish_time) {
+                    $pre_node_finish_time = $f_t;
+                }
+            }
                 
                 //寻找本台机器上的每一个时间片段=======================
-                for ($j = 0;$j < count($machine->m_time_seg_arr);$j++) {
-                    $segment = $machine->m_time_seg_arr[$j];
+            for ($j = 0;$j < count($machine->m_time_seg_arr);$j++) {
+                $segment = $machine->m_time_seg_arr[$j];
                     //看本片段内可否装入
-                    if($segment->m_finish_time > $pre_node_finish_time) {
-                        $start_time = $segment->m_start_time > $pre_node_finish_time?$segment->m_start_time:$pre_node_finish_time;
-                        $time_slot = $segment->m_finish_time - $start_time;
+                if($segment->m_finish_time > $pre_node_finish_time) {
+                    $start_time = $segment->m_start_time > $pre_node_finish_time?$segment->m_start_time:$pre_node_finish_time;
+                    $time_slot = $segment->m_finish_time - $start_time;
                         
                         //如果在时间缝隙之内 说明可以塞进去
-                        if($time_slot < $node->m_cost_arr[$i]) {
-                            continue; 
-                        }else{
-                            //如果找到了更小的 那么久记录下来
-                            $tmp_finish_time = $start_time+$node->m_cost_arr[$i];
-                            if($tmp_finish_time < $finish_time) {
-                                $finish_time = $tmp_finish_time;
-                                $target_machine_id = $i;
-                                $target_segment_id = $j;
-                                //在node里进行记录
-                                $node->m_start_time = $start_time;
-                                $node->m_finish_time = $finish_time;
-                            }
+                    if($time_slot < $node->m_cost_arr[$i]) {
+                        continue; 
+                    }else{
+                        //如果找到了更小的 那么久记录下来
+                        $tmp_finish_time = $start_time+$node->m_cost_arr[$i];
+                        if($tmp_finish_time < $finish_time) {
+                            $finish_time = $tmp_finish_time;
+                            $target_machine_id = $i;
+                            $target_segment_id = $j;
+                            //在node里进行记录
+                            $node->m_start_time = $start_time;
+                            $node->m_finish_time = $finish_time;
                         }
                     }
                 }
             }
-            //找到合适的机器之后就塞进去
+        }
+        //找到合适的机器之后就塞进去
             $node->m_machine_id = $target_machine_id;
             //更改机器配置
             $machine = $machine_arr[$target_machine_id];
@@ -143,10 +168,13 @@ class AlgoTool {
                 $new_seg->m_finish_time = $target_seg->m_finish_time;
                 array_splice($machine->m_time_seg_arr, $current_place, 0 , array($new_seg));
             }
-        }
     }
 }  
 
+
 function sortByUpwardValue($node_1 , $node_2) {
     return $node_1->m_up_ward_value > $node_2->m_up_ward_value?-1:1;
+}
+function sortByCPOPValue($node_1 , $node_2) {
+    return ($node_1->m_up_ward_value + $node_1->m_down_ward_value) > ($node_2->m_up_ward_value + $node_2->m_down_ward_value)?-1:1;
 }

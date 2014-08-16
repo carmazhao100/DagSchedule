@@ -68,4 +68,10 @@ class Node {
         $avg_cost = $sum_cost/count($this->m_cost_arr);
         $this->m_cost = $avg_cost;
     }
+    public function resetAllProperties() {
+        //时间
+        $this->m_start_time = 0;
+        $this->m_finish_time = 0;
+        $this->m_machine_id = -1;
+    }
 }

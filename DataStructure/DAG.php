@@ -58,4 +58,11 @@ class DAG {
             }
         }
     }
+    
+    public function resetAllNodes() {
+        $node_arr = array_values($this->m_node_dic);
+        for($i = 0;$i < count($node_arr);$i++) {
+            $node_arr[$i]->resetAllProperties();
+        }
+    }
 }

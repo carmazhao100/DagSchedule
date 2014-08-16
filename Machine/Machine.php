@@ -22,4 +22,12 @@ class Machine {
         $seg = new TimeSegment();
         array_push($this->m_time_seg_arr, $seg);
     }
+    
+    public function resetMachine() {
+        $this->m_node_arr = array();
+        $this->m_time_seg_arr = array();
+        //放入大的时间片
+        $seg = new TimeSegment();
+        array_push($this->m_time_seg_arr, $seg);
+    }
 }

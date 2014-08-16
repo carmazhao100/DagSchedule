@@ -16,7 +16,6 @@ $dag = DataManager::getInstance()->createOneDagWithParam(5,TOP_WIDE , 5);
 MachineManager::getInstance()->createMachineWithCount(5);
 //标定优先级
 $node_arr = AlgoTool::signPriorityByHEFT_Upward($dag);
-
 //运行分配机器
 AlgoTool::distributeNodesOnMachine($node_arr, MachineManager::getInstance()->m_machine_arr);
 

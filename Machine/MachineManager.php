@@ -30,4 +30,10 @@ class MachineManager {
             array_push($this->m_machine_arr, $machine);
         }
     }
+    
+    public function resetAllMachines() {
+        for($i = 0;$i < count($this->m_machine_arr);$i++) {
+            $this->m_machine_arr[$i]->resetMachine();
+        }
+    }
 }
