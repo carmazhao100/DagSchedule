@@ -45,6 +45,7 @@ class DataManager {
         $entry_node->m_index = 0;
         $entry_node->m_down_ward_value = 0;
         $new_dag->m_entry_node = $entry_node;
+        $new_dag->addNode(0, $entry_node);
         $this->decorateNodeCostArray($entry_node , $mnumber);
         //用来存储前面所有级别的node
         $old_node_arr = array();
@@ -60,13 +61,13 @@ class DataManager {
             //根据类型判断形状
             switch ($type) {
                 case TOP_WIDE:
-                    $current_level_number = (($level - $i) > 15?15:($level - $i))*rand(5 , 20);
+                    $current_level_number = (($level - $i) > 15?15:($level - $i))*rand(5 , 15);
                     break;
                 case MIDDLE_WIDE:
-                    $current_level_number = ($i > ($level/2)?($level - $i):$i)*rand(5 , 20);
+                    $current_level_number = ($i > ($level/2)?($level - $i):$i)*rand(5 , 15);
                     break;
                 case BUTTOM_WIDE:
-                    $current_level_number = ($i > 15?15:$i)*rand(5 , 20);
+                    $current_level_number = ($i > 15?15:$i)*rand(5 , 15);
                     break;
                 default:
                     break;

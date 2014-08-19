@@ -31,6 +31,18 @@ class MachineManager {
         }
     }
     
+    //把每个机器的任务分配情况输出
+    public function showMachineEnvironment() {
+        //检测代码
+        for($s = 0 ; $s < count($this->m_machine_arr);$s++) {
+            $machine = $this->m_machine_arr[$s];
+            printf("================= 机器  %d\n" , $s);
+            for($t = 0;$t < count($machine->m_node_arr);$t++) {
+                printf("拥有节点： %d\n" , $machine->m_node_arr[$t]->m_index);
+            }
+        }
+    }
+    
     public function resetAllMachines() {
         for($i = 0;$i < count($this->m_machine_arr);$i++) {
             $this->m_machine_arr[$i]->resetMachine();

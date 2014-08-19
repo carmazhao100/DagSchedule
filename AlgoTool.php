@@ -16,8 +16,16 @@ class AlgoTool {
         $entry_node = $dag->m_entry_node;
         //标注
         self::countPriorityUpward($entry_node);
+        $current_node = $dag->m_exit_node;
+        $node_queue = array();
+        array_push($node_queue, $current_node);
+        while(count($node_queue)) {
+            $current_node = array_shift($node_queue);
+        }
+        
         $value_arr = array_values($dag->m_node_dic);
         usort($value_arr, 'sortByUpwardValue');
+        
         return $value_arr;
     }
     //输入DAG 返回CPOP的队列array
