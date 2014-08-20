@@ -102,7 +102,7 @@ class DataManager {
                     $pre_node = $old_node_arr[$index];
                     //创建一条边
                     $new_edge = new Edge();
-                    $new_edge->m_cost = rand(10 , 50);
+                    $new_edge->m_cost = rand(10 , 200);
                     $new_edge->m_pre_node = $pre_node;
                     $new_edge->m_succ_node = $new_node;
                     //设置关系
@@ -155,7 +155,7 @@ class DataManager {
     
     private function decorateNodeCostArray($node , $m_number) {
         for($i = 0 ; $i < $m_number;$i++) {
-            $cost = rand(15 , 50);
+            $cost = rand(15 , 200);
             array_push($node->m_cost_arr, $cost);
         }
         $node->countAverageCost();

@@ -86,11 +86,11 @@ class AlgoTool {
     }
     
     //将工作分配到处理机上
-    public static function distributeNodesOnMachine($node_arr , $machine_arr) {
+    public static function distributeNodesOnMachine($node_arr , $machine_arr , $dag_reach_time) {
         //foreach ($node_arr as $node) {
         for($n = 0;$n < count($node_arr);$n++){
             $node = $node_arr[$n];
-            self::distributeSingleNodeOnMachine($node, $machine_arr);
+            self::distributeSingleNodeOnMachine($node, $machine_arr , $dag_reach_time);
         }
        
         //检测代码
@@ -103,15 +103,15 @@ class AlgoTool {
         }
     }
     //把工作分配到机器上
-    public static function distributeSingleNodeOnMachine($node , $machine_arr) {
+    public static function distributeSingleNodeOnMachine($node , $machine_arr , $dag_reach_time) {
         //找到合适的缝隙
         $target_machine_id = 0;
         $target_segment_id = 0;
         $finish_time = MAX_TIME;
         for ($i = 0;$i < count($machine_arr);$i++) {
             $machine = $machine_arr[$i];
-                //找到父节点们最晚结束时间，不在同一台机器上就加上传输边====================
-            $pre_node_finish_time = 0;
+            //找到父节点们最晚结束时间，不在同一台机器上就加上传输边====================
+            $pre_node_finish_time = $dag_reach_time;
             for($e = 0;$e < count($node->m_pre_edge_arr);$e++) {
                 $pre_edge = $node->m_pre_edge_arr[$e];
                 $f_t = 0;
@@ -129,7 +129,7 @@ class AlgoTool {
                 //寻找本台机器上的每一个时间片段=======================
             for ($j = 0;$j < count($machine->m_time_seg_arr);$j++) {
                 $segment = $machine->m_time_seg_arr[$j];
-                    //看本片段内可否装入
+                 //看本片段内可否装入
                 if($segment->m_finish_time > $pre_node_finish_time) {
                     $start_time = $segment->m_start_time > $pre_node_finish_time?$segment->m_start_time:$pre_node_finish_time;
                     $time_slot = $segment->m_finish_time - $start_time;
@@ -153,29 +153,29 @@ class AlgoTool {
             }
         }
         //找到合适的机器之后就塞进去
-            $node->m_machine_id = $target_machine_id;
+        $node->m_machine_id = $target_machine_id;
             //更改机器配置
-            $machine = $machine_arr[$target_machine_id];
-            array_push($machine->m_node_arr , $node);
+        $machine = $machine_arr[$target_machine_id];
+        array_push($machine->m_node_arr , $node);
             //对时间片操作
-            $target_seg = $machine->m_time_seg_arr[$target_segment_id];
-            array_splice($machine->m_time_seg_arr, $j, 1);//删除target segment
+        $target_seg = $machine->m_time_seg_arr[$target_segment_id];
+        array_splice($machine->m_time_seg_arr, $j, 1);//删除target segment
             //对时间片拆分,扣掉中间的时间消耗
-            $current_place = $target_segment_id;
-            if($node->m_start_time > $target_seg->m_start_time) {
-                $new_seg = new TimeSegment();
-                $new_seg->m_start_time = $target_seg->m_start_time;
-                $new_seg->m_end_time = $node->m_start_time;
-                array_splice($machine->m_time_seg_arr, $current_place, 0 , array($new_seg));
-                $current_place++;
-            }
+        $current_place = $target_segment_id;
+        if($node->m_start_time > $target_seg->m_start_time) {
+            $new_seg = new TimeSegment();
+            $new_seg->m_start_time = $target_seg->m_start_time;
+            $new_seg->m_end_time = $node->m_start_time;
+            array_splice($machine->m_time_seg_arr, $current_place, 0 , array($new_seg));
+            $current_place++;
+        }
             
-            if($node->m_finish_time < $target_seg->m_finish_time) {
-                $new_seg = new TimeSegment();
-                $new_seg->m_start_time = $node->m_finish_time;
-                $new_seg->m_finish_time = $target_seg->m_finish_time;
-                array_splice($machine->m_time_seg_arr, $current_place, 0 , array($new_seg));
-            }
+        if($node->m_finish_time < $target_seg->m_finish_time) {
+            $new_seg = new TimeSegment();
+            $new_seg->m_start_time = $node->m_finish_time;
+            $new_seg->m_finish_time = $target_seg->m_finish_time;
+            array_splice($machine->m_time_seg_arr, $current_place, 0 , array($new_seg));
+        }
     }
 }  
 

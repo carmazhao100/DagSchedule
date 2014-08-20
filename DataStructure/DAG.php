@@ -13,6 +13,8 @@ class DAG {
         $this->m_entry_node = null;
         $this->m_exit_node = null;
         $this->m_node_dic = array();//其实是个dic
+        $this->m_reach_time = 0;
+        $this->m_index = 0;
     }
     
     //出入口节点
@@ -35,6 +37,11 @@ class DAG {
 
         $this->m_node_dic[$index] = $node;
     }
+    
+    //到达的时间
+    public $m_reach_time;
+    //编号
+    public $m_index;
     
     public function showMe() {
         printf("start at %d\n", $this->m_entry_node->m_index
