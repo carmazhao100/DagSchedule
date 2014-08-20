@@ -67,6 +67,8 @@ class DAG {
     }
     
     public function resetAllNodes() {
+        $this->m_reach_time = 0;
+        $this->m_index = 0;
         $node_arr = array_values($this->m_node_dic);
         for($i = 0;$i < count($node_arr);$i++) {
             $node_arr[$i]->resetAllProperties();

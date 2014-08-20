@@ -38,6 +38,6 @@ class RoundRobinTool {
             }
         }
         
-        MachineManager::getInstance()->showMachineEnvironment();
+       // MachineManager::getInstance()->showMachineEnvironment();
     }
 }

@@ -24,6 +24,7 @@ class FIFOTool {
         }
     } 
 }
+
 function sortByReachTimeValue($dag_1 , $dag_2) {
-        return $dag_1->m_reach_time > $dag_2->m_reach_time?1:-1;
+    return $dag_1->m_reach_time > $dag_2->m_reach_time?1:-1;
 }

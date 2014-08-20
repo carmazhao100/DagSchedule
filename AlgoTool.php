@@ -94,13 +94,7 @@ class AlgoTool {
         }
        
         //检测代码
-        for($s = 0 ; $s < count($machine_arr);$s++) {
-            $machine = $machine_arr[$s];
-            printf("================= 机器  %d\n" , $s);
-            for($t = 0;$t < count($machine->m_node_arr);$t++) {
-                printf("拥有节点： %d\n" , $machine->m_node_arr[$t]->m_index);
-            }
-        }
+        MachineManager::getInstance()->showMachineEnvironment();
     }
     //把工作分配到机器上
     public static function distributeSingleNodeOnMachine($node , $machine_arr , $dag_reach_time) {
@@ -134,7 +128,7 @@ class AlgoTool {
                     $start_time = $segment->m_start_time > $pre_node_finish_time?$segment->m_start_time:$pre_node_finish_time;
                     $time_slot = $segment->m_finish_time - $start_time;
                         
-                        //如果在时间缝隙之内 说明可以塞进去
+                    //如果在时间缝隙之内 说明可以塞进去
                     if($time_slot < $node->m_cost_arr[$i]) {
                         continue; 
                     }else{
@@ -159,14 +153,18 @@ class AlgoTool {
         array_push($machine->m_node_arr , $node);
             //对时间片操作
         $target_seg = $machine->m_time_seg_arr[$target_segment_id];
-        array_splice($machine->m_time_seg_arr, $j, 1);//删除target segment
+        //echo "当前要删除     " , $target_segment_id , "\n";
+        //echo "====数目是", count($machine->m_time_seg_arr) , "\n";
+        array_splice($machine->m_time_seg_arr, $target_segment_id, 1);//删除target segment
+       // echo "====数目是", count($machine->m_time_seg_arr) , "\n";
             //对时间片拆分,扣掉中间的时间消耗
         $current_place = $target_segment_id;
         if($node->m_start_time > $target_seg->m_start_time) {
             $new_seg = new TimeSegment();
             $new_seg->m_start_time = $target_seg->m_start_time;
-            $new_seg->m_end_time = $node->m_start_time;
-            array_splice($machine->m_time_seg_arr, $current_place, 0 , array($new_seg));
+            $new_seg->m_finish_time = $node->m_start_time;
+            //echo"当前 start是 ", $new_seg->m_start_time , " " , $new_seg->m_finish_time , "\n";
+            array_splice($machine->m_time_seg_arr, $current_place, 1 , array($new_seg));
             $current_place++;
         }
             
@@ -174,7 +172,8 @@ class AlgoTool {
             $new_seg = new TimeSegment();
             $new_seg->m_start_time = $node->m_finish_time;
             $new_seg->m_finish_time = $target_seg->m_finish_time;
-            array_splice($machine->m_time_seg_arr, $current_place, 0 , array($new_seg));
+            array_splice($machine->m_time_seg_arr, $current_place, 1 , array($new_seg));
+           // echo"当前 start是 ", $new_seg->m_start_time , " " , $new_seg->m_finish_time , "\n";
         }
     }
 }  

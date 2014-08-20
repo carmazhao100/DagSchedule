@@ -36,10 +36,14 @@ class MachineManager {
         //检测代码
         for($s = 0 ; $s < count($this->m_machine_arr);$s++) {
             $machine = $this->m_machine_arr[$s];
-            printf("================= 机器  %d\n" , $s);
-            for($t = 0;$t < count($machine->m_node_arr);$t++) {
+            printf("================= 机器  %d 总共有%d个任务\n" , $s , count($machine->m_node_arr));
+            /*for($t = 0;$t < count($machine->m_node_arr);$t++) {
                 printf("拥有节点： %d\n" , $machine->m_node_arr[$t]->m_index);
-            }
+            }*/
+            
+           /* for($i = 0;$i < count($machine->m_time_seg_arr);$i++) {
+                printf("时间片 %d : %d-----%d\n" , $i ,$machine->m_time_seg_arr[$i]->m_start_time , $machine->m_time_seg_arr[$i]->m_finish_time );
+            }*/
         }
     }
     
