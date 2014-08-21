@@ -35,7 +35,7 @@ class EFairnessTool {
             for($i = 0;$i < count($dag_list_arr);$i++) {
                 $sort_list = &$dag_list_arr[$i];
                 //还没到时间
-               // echo "reach时间是 ", $dag_arr[$i]->m_reach_time, "现在时间是 ",$next_free_time , "\n";
+                // echo "reach时间是 ", $dag_arr[$i]->m_reach_time, "现在时间是 ",$next_free_time , "\n";
                 if($dag_arr[$i]->m_reach_time > $next_free_time) {
                     //echo "reach时间是 ", $dag_arr[$i]->m_reach_time, "现在时间是 ",$next_free_time , "\n";
                     continue;
@@ -92,8 +92,10 @@ class EFairnessTool {
     public static function combineAllPool($pool) {
         $arr = array();
         for($i = 0;$i < count($pool);$i++) {
+            echo "Pool 数组" , $i , " 拥有任务" , count($pool[$i]) , "\n";
             $arr = array_merge($arr , $pool[$i]);
         }
+        echo "=====================\n";
         return $arr;
     }
     
