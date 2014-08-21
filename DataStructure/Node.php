@@ -49,8 +49,8 @@ class Node {
         $this->m_up_ward_value = -1;
         $this->m_down_ward_value = -1;
         //时间
-        $this->m_start_time = 0;
-        $this->m_finish_time = 0;
+        $this->m_start_time = -1;
+        $this->m_finish_time = -1;
         $this->m_machine_id = -1;
     }
     
@@ -70,8 +70,8 @@ class Node {
     }
     public function resetAllProperties() {
         //时间
-        $this->m_start_time = 0;
-        $this->m_finish_time = 0;
+        $this->m_start_time = -1;
+        $this->m_finish_time = -1;
         $this->m_machine_id = -1;
     }
 }

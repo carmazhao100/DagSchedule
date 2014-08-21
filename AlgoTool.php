@@ -96,7 +96,7 @@ class AlgoTool {
         //检测代码
         MachineManager::getInstance()->showMachineEnvironment();
     }
-    //把工作分配到机器上
+    //把工作分配到机器上，返回本台机器的下次ready时间
     public static function distributeSingleNodeOnMachine($node , $machine_arr , $dag_reach_time) {
         //找到合适的缝隙
         $target_machine_id = 0;
@@ -175,6 +175,7 @@ class AlgoTool {
             array_splice($machine->m_time_seg_arr, $current_place, 0 , array($new_seg));
            // echo"第二当前 start是 ", $new_seg->m_start_time , " " , $new_seg->m_finish_time , "\n";
         }
+        return $node->m_finish_time;
     }
 }  
 
