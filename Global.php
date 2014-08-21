@@ -10,4 +10,3 @@ const TOP_WIDE = 0;
 const MIDDLE_WIDE = 1;
 const BUTTOM_WIDE = 2;
 
-const MAX_TIME = 99999999;

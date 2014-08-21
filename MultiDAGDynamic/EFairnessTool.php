@@ -35,7 +35,9 @@ class EFairnessTool {
             for($i = 0;$i < count($dag_list_arr);$i++) {
                 $sort_list = &$dag_list_arr[$i];
                 //还没到时间
+               // echo "reach时间是 ", $dag_arr[$i]->m_reach_time, "现在时间是 ",$next_free_time , "\n";
                 if($dag_arr[$i]->m_reach_time > $next_free_time) {
+                    //echo "reach时间是 ", $dag_arr[$i]->m_reach_time, "现在时间是 ",$next_free_time , "\n";
                     continue;
                 }
                 
@@ -61,7 +63,6 @@ class EFairnessTool {
                         array_push($ready_pool[$i] , $node);
                         //删除掉
                         array_splice($sort_list, $j, 1);
-                        echo '还剩下' , count($sort_list) , "\n";
                     }
                 }
                 //如果队列空了 就删掉
@@ -72,23 +73,28 @@ class EFairnessTool {
             }
             
             //把现在pool里面的任务都清空掉
-            $ready_node_list = array();
+            $ready_node_list = self::combineAllPool($ready_pool);
             if(self::checkAllTheSame($ready_pool)) {
-                
+                usort($ready_node_list, 'sortBigFirst');
             }else{
-                
+                usort($ready_node_list, 'sortSmallFirst');
+            }
+            $next_free_time = AlgoTool::distributeNodesFromMultiDAGsOnMachine($ready_node_list, $machine_arr);
+            //重置ready pool
+            $ready_pool = array();
+            for($i = 0;$i < count($dag_arr);$i++) {
+                $arr = array();
+                $ready_pool[$i] = $arr;
             }
         }
-        
-        /*for($i = 0;$i < count($ready_pool[0]);$i++) {
-            printf("这里面包含 %d \n" , $ready_pool[0][$i]->m_index);
-        }*/
     }
     
     public static function combineAllPool($pool) {
+        $arr = array();
         for($i = 0;$i < count($pool);$i++) {
-            
+            $arr = array_merge($arr , $pool[$i]);
         }
+        return $arr;
     }
     
     public static function checkAllTheSame($pool) {
@@ -105,4 +111,11 @@ class EFairnessTool {
         
         return $result;
     }
+}
+
+function sortBigFirst($node_1 , $node_2) {
+    return $node_1->m_up_ward_value > $node_2->m_up_ward_value?-1:1;
+}
+function sortSmallFirst($node_1 , $node_2) {
+    return $node_1->m_up_ward_value < $node_2->m_up_ward_value?-1:1;
 }

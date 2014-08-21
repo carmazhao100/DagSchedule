@@ -41,9 +41,9 @@ class MachineManager {
                 printf("拥有节点： %d\n" , $machine->m_node_arr[$t]->m_index);
             }*/
             
-           /* for($i = 0;$i < count($machine->m_time_seg_arr);$i++) {
+            for($i = 0;$i < count($machine->m_time_seg_arr);$i++) {
                 printf("时间片 %d : %d-----%d\n" , $i ,$machine->m_time_seg_arr[$i]->m_start_time , $machine->m_time_seg_arr[$i]->m_finish_time );
-            }*/
+            }
         }
     }
     

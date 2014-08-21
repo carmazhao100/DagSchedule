@@ -13,6 +13,8 @@ class Node {
     public $m_cost_arr;
     //每个节点编号
     public $m_index;
+    //所属的dag
+    public $m_dag;
     //前向节点
     public  $m_pre_node_arr;
     //后续节点
@@ -39,6 +41,7 @@ class Node {
         $this->m_cost = 0;
         $this->m_cost_arr = array();
         $this->m_index = 0;
+        $this->m_dag = null;
         //节点数组
         $this->m_pre_node_arr = array();
         $this->m_succ_node_arr = array();

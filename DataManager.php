@@ -42,6 +42,7 @@ class DataManager {
         $new_dag = new DAG();
         //开始节点
         $entry_node = new Node();
+        $entry_node->m_dag = $new_dag;
         $entry_node->m_index = 0;
         $entry_node->m_down_ward_value = 0;
         $new_dag->m_entry_node = $entry_node;
@@ -82,6 +83,7 @@ class DataManager {
                 
                 //设置相关参数
                 $new_node->m_index = $node_number;
+                $new_node->m_dag = $new_dag;
                 $node_number++;
                 $this->decorateNodeCostArray($new_node , $mnumber);
                 $new_dag->addNode($new_node->m_index, $new_node);
@@ -123,6 +125,7 @@ class DataManager {
             if($i == $level - 1) {
                 $exit_node = new Node();
                 $exit_node->m_index = $node_number;
+                $exit_node->m_dag = $new_dag;
                 $exit_node->m_up_ward_value = 0;
                 //把尾节点所有的cost都设置为0
                 for($a = 0 ; $a < $mnumber;$a++) {

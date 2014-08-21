@@ -14,45 +14,50 @@ require_once 'MultiDAG/RoundRobinTool.php';
 require_once 'MultiDAGDynamic/FIFOTool.php';
 require_once 'MultiDAGDynamic/EFairnessTool.php';
 
+$time_inter_base = 100;
+function showDagResult($dag_arr) {
+    for($i = 0;$i < count($dag_arr);$i++) {
+        printf("====DAG  %d 的执行时间是： %d\n" , $i , ($dag_arr[$i]->m_exit_node->m_finish_time - $dag_arr[$i]->m_reach_time));
+    }
+}
 //创造dag
-$dag_1 = DataManager::getInstance()->createOneDagWithParam(10,TOP_WIDE , 5);
-$dag_1->m_reach_time = 0;
-$dag_1->m_index = 0;
-$dag_2 = DataManager::getInstance()->createOneDagWithParam(10,TOP_WIDE , 5);
-$dag_2->m_reach_time = 40;
-$dag_2->m_index = 1;
+$dag_arr = array();
+for($i = 0;$i < 10;$i++) {
+    $dag = DataManager::getInstance()->createOneDagWithParam(5,BUTTOM_WIDE , 5);
+    $dag_arr[$i] = $dag;
+    $dag->m_reach_time = $i * $time_inter_base;
+}
 
-
-/*$dag_3 = DataManager::getInstance()->createOneDagWithParam(10,TOP_WIDE , 5);
-$dag_4 = DataManager::getInstance()->createOneDagWithParam(10,TOP_WIDE , 5);
-$dag_5 = DataManager::getInstance()->createOneDagWithParam(10,TOP_WIDE , 5);*/
 //设定机器数目
 MachineManager::getInstance()->createMachineWithCount(5);
-$dag_arr = array("0"=>$dag_1);//
-//
-// , "1"=>$dag_2 );
-        //, "2"=>$dag_3 , "3"=>$dag_4 , "4"=>$dag_5);
+
+//==========EFAIRNESS=============
 EFairnessTool::runDAGArray($dag_arr, MachineManager::getInstance()->m_machine_arr);
-/*FIFOTool::runDAGArray($dag_arr, MachineManager::getInstance()->m_machine_arr);
+echo "EFairness 的结果\n";
+showDagResult($dag_arr);
+//MachineManager::getInstance()->showMachineEnvironment();
 
-printf("DAG  %d 的执行时间是： %d\n" , $dag_1->m_index , ($dag_1->m_exit_node->m_finish_time - $dag_1->m_reach_time));
-printf("DAG  %d 的执行时间是： %d\n" , $dag_2->m_index , ($dag_2->m_exit_node->m_finish_time - $dag_2->m_reach_time));
-
-
+//===========FIFO==================
+MachineManager::getInstance()->resetAllMachines();
+for($i = 0;$i < count($dag_arr);$i++) {
+    $dag_arr[$i]->resetAllNodes();
+    $dag_arr[$i]->m_reach_time = $i * $time_inter_base;
+}
+FIFOTool::runDAGArray($dag_arr, MachineManager::getInstance()->m_machine_arr);
+echo "FIFO 的结果\n";
+showDagResult($dag_arr);
 
 //正常的
-MachineManager::getInstance()->resetAllMachines();
-$dag_1->resetAllNodes();
-$node_arr = AlgoTool::signPriorityByHEFT_Upward($dag_1);
-AlgoTool::distributeNodesOnMachine($node_arr, MachineManager::getInstance()->m_machine_arr, 0);
-printf("DAG  %d 的执行时间是： %d\n" , $dag_1->m_index , ($dag_1->m_exit_node->m_finish_time - $dag_1->m_reach_time));
+echo "正常的结果\n";
 
-MachineManager::getInstance()->resetAllMachines();
-$dag_2->resetAllNodes();
-$node_arr = AlgoTool::signPriorityByHEFT_Upward($dag_2);
-AlgoTool::distributeNodesOnMachine($node_arr, MachineManager::getInstance()->m_machine_arr, 0);
-printf("DAG  %d 的执行时间是： %d\n" , $dag_2->m_index , ($dag_2->m_exit_node->m_finish_time - $dag_2->m_reach_time));
-*/
+for($i = 0;$i < count($dag_arr);$i++) {
+    MachineManager::getInstance()->resetAllMachines();
+    $dag_arr[$i]->resetAllNodes();
+    $dag_arr[$i]->m_reach_time = $i * $time_inter_base;
+    $node_arr = AlgoTool::signPriorityByHEFT_Upward($dag_arr[$i]);
+    AlgoTool::distributeNodesOnMachine($node_arr, MachineManager::getInstance()->m_machine_arr, 0);
+    printf("====DAG  %d 的执行时间是： %d\n" , $i , ($dag_arr[$i]->m_exit_node->m_finish_time - $dag_arr[$i]->m_reach_time));
+}
 //RoundRobinTool::runDAGArray($dag_arr, MachineManager::getInstance()->m_machine_arr);
 //printf("测试   %d" , $dag_2->m_node_dic[18]->m_start_time);
 //$dag = SingleJoinTool::joinDAGs_SimpleJoin($dag_arr , 5);

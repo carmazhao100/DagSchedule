@@ -85,23 +85,42 @@ class AlgoTool {
         return $node->m_down_ward_value;
     }
     
-    //将工作分配到处理机上
+    //将工作分配到处理机上，并且返回最早的ready时间,单个dag使用
     public static function distributeNodesOnMachine($node_arr , $machine_arr , $dag_reach_time) {
-        //foreach ($node_arr as $node) {
+        $ready_time = PHP_INT_MAX;
         for($n = 0;$n < count($node_arr);$n++){
             $node = $node_arr[$n];
-            self::distributeSingleNodeOnMachine($node, $machine_arr , $dag_reach_time);
+            $tmp_ready_time = self::distributeSingleNodeOnMachine($node, $machine_arr , $dag_reach_time);
+            if($tmp_ready_time < $ready_time) {
+                $ready_time = $tmp_ready_time;
+            }
         }
        
         //检测代码
-        MachineManager::getInstance()->showMachineEnvironment();
+        //MachineManager::getInstance()->showMachineEnvironment();
+        return $ready_time;
+    }
+    //node属于不通dag使用
+    public static function distributeNodesFromMultiDAGsOnMachine($node_arr , $machine_arr) {
+        $ready_time = PHP_INT_MAX;
+        for($n = 0;$n < count($node_arr);$n++){
+            $node = $node_arr[$n];
+            $tmp_ready_time = self::distributeSingleNodeOnMachine($node, $machine_arr , $node->m_dag->m_reach_time);
+            if($tmp_ready_time < $ready_time) {
+                $ready_time = $tmp_ready_time;
+            }
+        }
+       
+        //检测代码
+        //MachineManager::getInstance()->showMachineEnvironment();
+        return $ready_time;
     }
     //把工作分配到机器上，返回本台机器的下次ready时间
     public static function distributeSingleNodeOnMachine($node , $machine_arr , $dag_reach_time) {
         //找到合适的缝隙
         $target_machine_id = 0;
         $target_segment_id = 0;
-        $finish_time = MAX_TIME;
+        $finish_time = PHP_INT_MAX;
         for ($i = 0;$i < count($machine_arr);$i++) {
             $machine = $machine_arr[$i];
             //找到父节点们最晚结束时间，不在同一台机器上就加上传输边====================
@@ -120,7 +139,7 @@ class AlgoTool {
                 }
             }
                 
-                //寻找本台机器上的每一个时间片段=======================
+            //寻找本台机器上的每一个时间片段=======================
             for ($j = 0;$j < count($machine->m_time_seg_arr);$j++) {
                 $segment = $machine->m_time_seg_arr[$j];
                  //看本片段内可否装入
