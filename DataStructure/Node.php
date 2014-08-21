@@ -32,7 +32,7 @@ class Node {
     //开始时间
     public $m_start_time;
     //结束时间
-    public $m_end_time;
+    public $m_finish_time;
     
     //构造+初始化
     public function __construct() {

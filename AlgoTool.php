@@ -153,18 +153,18 @@ class AlgoTool {
         array_push($machine->m_node_arr , $node);
             //对时间片操作
         $target_seg = $machine->m_time_seg_arr[$target_segment_id];
-        //echo "当前要删除     " , $target_segment_id , "\n";
+       // echo "当前要删除     " , $target_segment_id , "\n";
         //echo "====数目是", count($machine->m_time_seg_arr) , "\n";
         array_splice($machine->m_time_seg_arr, $target_segment_id, 1);//删除target segment
-       // echo "====数目是", count($machine->m_time_seg_arr) , "\n";
+        //echo "====数目是", count($machine->m_time_seg_arr) , "\n";
             //对时间片拆分,扣掉中间的时间消耗
         $current_place = $target_segment_id;
         if($node->m_start_time > $target_seg->m_start_time) {
             $new_seg = new TimeSegment();
             $new_seg->m_start_time = $target_seg->m_start_time;
             $new_seg->m_finish_time = $node->m_start_time;
-            //echo"当前 start是 ", $new_seg->m_start_time , " " , $new_seg->m_finish_time , "\n";
-            array_splice($machine->m_time_seg_arr, $current_place, 1 , array($new_seg));
+            //echo"第一当前 start是 ", $new_seg->m_start_time , " " , $new_seg->m_finish_time , "\n";
+            array_splice($machine->m_time_seg_arr, $current_place, 0 , array($new_seg));
             $current_place++;
         }
             
@@ -172,8 +172,8 @@ class AlgoTool {
             $new_seg = new TimeSegment();
             $new_seg->m_start_time = $node->m_finish_time;
             $new_seg->m_finish_time = $target_seg->m_finish_time;
-            array_splice($machine->m_time_seg_arr, $current_place, 1 , array($new_seg));
-           // echo"当前 start是 ", $new_seg->m_start_time , " " , $new_seg->m_finish_time , "\n";
+            array_splice($machine->m_time_seg_arr, $current_place, 0 , array($new_seg));
+           // echo"第二当前 start是 ", $new_seg->m_start_time , " " , $new_seg->m_finish_time , "\n";
         }
     }
 }  

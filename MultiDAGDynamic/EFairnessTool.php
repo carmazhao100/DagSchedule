@@ -7,5 +7,12 @@
  */
 
 class EFairnessTool {
-    
+    public static function runDAGArray($dag_arr , $machine_arr) {
+        $ready_pool_dic = array();
+        //用来计时
+        $current_time = 0;
+        while(true) {
+            
+        }
+    }
 }
