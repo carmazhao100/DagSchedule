@@ -41,10 +41,60 @@ class EFairnessTool {
                 break;
             }
       //寻找可以解放的node list=====================================
+           $free_machine_arr = array();
             unset($target_list_arr);
-            $target_list_arr = array();
+            $target_list_arr = self::getActiveDagListArray($allocated_node_arr , $dag_list_arr , $dag_arr , $free_machine_arr);
+            if(count($allocated_node_arr)) {
+                $next_free_time = $allocated_node_arr[0]->m_finish_time;;
+            }
+      //构造ready pool
+            self::fillReadyPool($ready_pool , $target_list_arr , $dag_list_arr);
+       //把现在pool里面的任务都清空掉
+            $ready_node_list = self::combineAllPool($ready_pool);
+            echo "现在的ready pool 数目是 " , count($ready_node_list) , "\n";
+            while(count($ready_node_list)) {
+               if(self::checkAllTheSame($ready_pool)) {
+                   usort($ready_node_list, 'sortBigFirst');
+                   //echo "big\n";
+               }else{
+                  usort($ready_node_list, 'sortSmallFirst');
+                  //echo "small\n";
+               }
+               AlgoTool::distributeSingleNodeOnMachine($ready_node_list[0], $machine_arr,$next_free_time);
+               //存储已分配的node
+               array_push($allocated_node_arr, $ready_node_list[0]);  
+               echo "   执行了一个节点:" , $ready_node_list[0]->m_index;
+               //去除头元素
+               array_splice($ready_node_list, 0, 1);
+            }
+            //重置ready pool
+            $ready_pool = array();
+            for($i = 0;$i < count($dag_arr);$i++) {
+                $arr = array();
+                $ready_pool[$i] = $arr;
+            }
+           // echo "qqqqq现在daglistarry大小为 " , count($dag_list_arr) , "\n";
+        }
+    }
+    
+    public static function combineAllPool($pool) {
+        $arr = array();
+        for($i = 0;$i < count($pool);$i++) {
+            //echo "Pool 数组" , $i , " 拥有任务" , count($pool[$i]) , "\n";
+            $arr = array_merge($arr , $pool[$i]);
+        }
+        //echo "=====================\n";
+        return $arr;
+    }
+    
+    public static function getActiveDagListArray(&$allocated_node_arr , &$dag_list_arr , &$dag_arr , &$machine_arr) {
             echo "------------现在开始审查 ALLOCATED NODE  ARRAY\n";
             echo "   Allocated node array 数目是 : " , count($allocated_node_arr) , "\n";
+            $target_list_arr = array();
+            $next_free_time = 0;
+            if(count($allocated_node_arr) == 0) {
+                $next_free_time = MAX_NUMBER;
+            }
             if(count($allocated_node_arr)) {
                 //排序
                 usort($allocated_node_arr, 'sortByFinishTime');
@@ -61,18 +111,18 @@ class EFairnessTool {
                             continue;
                         }
                         $target_list = &$dag_list_arr[$node->m_dag->m_index];
-                        if(count($target_list) != 0) {
-                            array_push($target_list_arr, $target_list);
-                            echo "________DAG index ：" , $dag_index , "被选入 , 长度为" , count($target_list) , "\n";
-                            array_splice($allocated_node_arr, $a , 1);
-                            $a--;
-                        }
+                        array_push($target_list_arr, $target_list);
+                        echo "________DAG index ：" , $dag_index , "被选入 , 长度为" , count($target_list) , "\n";
+                        array_splice($allocated_node_arr, $a , 1);
+                        //如果没了可完成的点
+                        
+                        $a--;
                     }else{
                         break;
                     }
                     //如果一个都没选到，比如说目标DAG已经空了
                     
-                    if(count(self::combineAllPool($target_list_arr) == 0)) {
+                   /* if(count($target_list_arr) == 0) {
                         echo "启动了============================";
                         for($i = 0;$i < count($dag_list_arr);$i++) {
                             if($dag_arr[$i]->m_reach_time <= $next_free_time) {
@@ -83,9 +133,7 @@ class EFairnessTool {
                         echo "结束了============================";
                     }else {
                         echo "target array list 里面是有东西的！\n";
-                    }
-                    
-                   // echo "xxxx现在的target_list_arr 为 " , count($target_list_arr) , "\n";
+                    }*/
                 }
             }else{
                 for($i = 0;$i < count($dag_list_arr);$i++) {
@@ -94,11 +142,11 @@ class EFairnessTool {
                     }
                 }
             }
-            
-            
-            echo "\n++++++++++++开始执行算法，搜索ReadyNodes\n";
+        return $target_list_arr;
+    }
+    public static function fillReadyPool(&$ready_pool , &$target_list_arr , &$dag_list_arr){
+        echo "\n++++++++++++开始执行算法，搜索ReadyNodes\n";
             $current_target_list_index = 0;
-            echo "targetlist里 共有list " , count($target_list) , "\n";
             for($i = 0;$i < count($target_list_arr);$i++) {
                 $sort_list = $target_list_arr[$i];
                 if(count($sort_list) == 0) {
@@ -106,12 +154,6 @@ class EFairnessTool {
                     continue;
                 }
                 $current_target_list_index = $sort_list[0]->m_dag->m_index;
-                //至少检查下所属的DAG是否到达了该执行的时间
-                if(count($sort_list)) {
-                    if($sort_list[0]->m_dag->m_reach_time > $next_free_time) {
-                        continue;
-                    }
-                }
                 
       //找到一个node 然后检查是否激活，激活了就放进去。否则中断
                 $break_it = false;
@@ -149,42 +191,6 @@ class EFairnessTool {
                     $dag_list_arr[$current_target_list_index] = array();
                 }
             }
-            //把现在pool里面的任务都清空掉
-            $ready_node_list = self::combineAllPool($ready_pool);
-            echo "现在的ready pool 数目是 " , count($ready_node_list) , "\n";
-            while(count($ready_node_list)) {
-               if(self::checkAllTheSame($ready_pool)) {
-                   usort($ready_node_list, 'sortBigFirst');
-                   //echo "big\n";
-               }else{
-                  usort($ready_node_list, 'sortSmallFirst');
-                  //echo "small\n";
-               }
-               AlgoTool::distributeSingleNodeOnMachine($ready_node_list[0], $machine_arr,$next_free_time);
-               //存储已分配的node
-               array_push($allocated_node_arr, $ready_node_list[0]);  
-               echo "   执行了一个节点:" , $ready_node_list[0]->m_index;
-               //去除头元素
-               array_splice($ready_node_list, 0, 1);
-            }
-            //重置ready pool
-            $ready_pool = array();
-            for($i = 0;$i < count($dag_arr);$i++) {
-                $arr = array();
-                $ready_pool[$i] = $arr;
-            }
-           // echo "qqqqq现在daglistarry大小为 " , count($dag_list_arr) , "\n";
-        }
-    }
-    
-    public static function combineAllPool($pool) {
-        $arr = array();
-        for($i = 0;$i < count($pool);$i++) {
-            //echo "Pool 数组" , $i , " 拥有任务" , count($pool[$i]) , "\n";
-            $arr = array_merge($arr , $pool[$i]);
-        }
-        //echo "=====================\n";
-        return $arr;
     }
     
     public static function checkAllTheSame($pool) {

@@ -14,7 +14,7 @@ require_once 'MultiDAG/RoundRobinTool.php';
 require_once 'MultiDAGDynamic/FIFOTool.php';
 require_once 'MultiDAGDynamic/EFairnessTool.php';
 
-$time_inter_base = 10;
+$time_inter_base = 100;
 function showDagResult($dag_arr) {
     $sum = 0;
     for($i = 0;$i < count($dag_arr);$i++) {
@@ -25,8 +25,8 @@ function showDagResult($dag_arr) {
 }
 //创造dag
 $dag_arr = array();
-for($i = 0;$i < 2;$i++) {
-    $dag = DataManager::getInstance()->createOneDagWithParam(4,MIDDLE_WIDE , MACHINE_NUMBER);
+for($i = 0;$i < 10;$i++) {
+    $dag = DataManager::getInstance()->createOneDagWithParam(6,MIDDLE_WIDE , MACHINE_NUMBER);
     $dag->m_index = $i;
     $dag_arr[$i] = $dag;
     $dag->m_reach_time = $i * $time_inter_base;
