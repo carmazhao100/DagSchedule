@@ -11,7 +11,7 @@ class TimeSegment {
     public $m_finish_time;
     //构造+初始化
     public function __construct() {
-        $this->m_finish_time = PHP_INT_MAX;
+        $this->m_finish_time = MAX_NUMBER;
         $this->m_start_time = 0;
     }
 }

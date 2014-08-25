@@ -9,6 +9,7 @@ require_once 'DataStructure/Node.php';
 require_once 'DataStructure/Edge.php';
 require_once 'DataManager.php';
 require_once 'Machine/TimeSegment.php';
+require_once 'Global.php';
 
 class AlgoTool {
     //输入DAG 返回HEFT的队列array
@@ -87,7 +88,7 @@ class AlgoTool {
     
     //将工作分配到处理机上，并且返回最早的ready时间,单个dag使用
     public static function distributeNodesOnMachine($node_arr , $machine_arr , $dag_reach_time) {
-        $ready_time = PHP_INT_MAX;
+        $ready_time = MAX_NUMBER;
         for($n = 0;$n < count($node_arr);$n++){
             $node = $node_arr[$n];
             $tmp_ready_time = self::distributeSingleNodeOnMachine($node, $machine_arr , $dag_reach_time);
@@ -102,7 +103,7 @@ class AlgoTool {
     }
     //node属于不通dag使用
     public static function distributeNodesFromMultiDAGsOnMachine($node_arr , $machine_arr) {
-        $ready_time = PHP_INT_MAX;
+        $ready_time = MAX_NUMBER;
         for($n = 0;$n < count($node_arr);$n++){
             $node = $node_arr[$n];
             $tmp_ready_time = self::distributeSingleNodeOnMachine($node, $machine_arr , $node->m_dag->m_reach_time);
@@ -120,7 +121,7 @@ class AlgoTool {
         //找到合适的缝隙
         $target_machine_id = 0;
         $target_segment_id = 0;
-        $finish_time = PHP_INT_MAX;
+        $finish_time = MAX_NUMBER;
         for ($i = 0;$i < count($machine_arr);$i++) {
             $machine = $machine_arr[$i];
             //找到父节点们最晚结束时间，不在同一台机器上就加上传输边====================
