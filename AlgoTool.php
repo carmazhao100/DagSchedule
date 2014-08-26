@@ -130,7 +130,7 @@ class AlgoTool {
                 $pre_edge = $node->m_pre_edge_arr[$e];
                 $f_t = 0;
                 $pre_node = $pre_edge->m_pre_node;
-                if($pre_node->m_machine_id == $i) {
+                if($pre_node->m_machine_id == $machine->m_index) {
                     $f_t = $pre_node->m_finish_time;
                 }else{
                     $f_t = $pre_node->m_finish_time + $pre_edge->m_cost;
@@ -148,6 +148,7 @@ class AlgoTool {
                     $start_time = $segment->m_start_time > $pre_node_finish_time?$segment->m_start_time:$pre_node_finish_time;
                     $time_slot = $segment->m_finish_time - $start_time;
                         
+                   // echo "在机器 " , $machine->m_index , "上执行start = " , $start_time , " slot = " ,$time_slot , "\n"; 
                     //如果在时间缝隙之内 说明可以塞进去
                     if($time_slot < $node->m_cost_arr[$i]) {
                         continue; 
@@ -156,7 +157,7 @@ class AlgoTool {
                         $tmp_finish_time = $start_time+$node->m_cost_arr[$i];
                         if($tmp_finish_time < $finish_time) {
                             $finish_time = $tmp_finish_time;
-                            $target_machine_id = $i;
+                            $target_machine_id = $machine->m_index;
                             $target_segment_id = $j;
                             //在node里进行记录
                             $node->m_start_time = $start_time;
@@ -169,7 +170,7 @@ class AlgoTool {
         //找到合适的机器之后就塞进去
         $node->m_machine_id = $target_machine_id;
             //更改机器配置
-        $machine = $machine_arr[$target_machine_id];
+        $machine = MachineManager::getInstance()->m_machine_arr[$target_machine_id];
         array_push($machine->m_node_arr , $node);
             //对时间片操作
         $target_seg = $machine->m_time_seg_arr[$target_segment_id];
@@ -195,6 +196,7 @@ class AlgoTool {
             array_splice($machine->m_time_seg_arr, $current_place, 0 , array($new_seg));
            // echo"第二当前 start是 ", $new_seg->m_start_time , " " , $new_seg->m_finish_time , "\n";
         }
+        //echo "finish time is " , $node->m_finish_time , "\n";
         return $node->m_finish_time;
     }
 }  

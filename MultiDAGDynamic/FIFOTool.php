@@ -20,7 +20,11 @@ class FIFOTool {
         for($i = 0;$i < count($dag_arr);$i++) {
             $node_arr = AlgoTool::signPriorityByHEFT_Upward($dag_arr[$i]);
             $sort_node_arr[$i] = $node_arr;
-            AlgoTool::distributeNodesOnMachine($node_arr, MachineManager::getInstance()->m_machine_arr, $dag_arr[$i]->m_reach_time);
+            $next_start_time = 0;
+            if($i > 0){
+                $next_start_time = $dag_arr[$i]->m_reach_time > $dag_arr[$i - 1]->m_exit_node->m_finish_time?$dag_arr[$i]->m_reach_time : $dag_arr[$i - 1]->m_exit_node->m_finish_time;
+            }
+            AlgoTool::distributeNodesOnMachine($node_arr, MachineManager::getInstance()->m_machine_arr, $next_start_time);
         }
     } 
 }

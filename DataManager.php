@@ -67,7 +67,7 @@ class DataManager {
                 case MIDDLE_WIDE:
                     $current_level_number = ($i > ($level/2)?($level - $i):$i)*rand(5 , 15);
                     break;
-                case BUTTOM_WIDE:
+                case BOTTOM_WIDE:
                     $current_level_number = ($i > 15?15:$i)*rand(5 , 15);
                     break;
                 default:

@@ -8,7 +8,7 @@
 
 const TOP_WIDE = 0;
 const MIDDLE_WIDE = 1;
-const BUTTOM_WIDE = 2;
+const BOTTOM_WIDE = 2;
 
 const MACHINE_NUMBER = 5;
 

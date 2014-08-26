@@ -13,11 +13,13 @@ class Machine {
     public $m_node_arr;
     //用来装时间碎片
     public $m_time_seg_arr;
+    public $m_index;
     
     //构造+初始化
     public function __construct() {
         $this->m_node_arr = array();
         $this->m_time_seg_arr = array();
+        $this->m_index = 0;
         //放入大的时间片
         $seg = new TimeSegment();
         array_push($this->m_time_seg_arr, $seg);

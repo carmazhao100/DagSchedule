@@ -27,6 +27,7 @@ class MachineManager {
     public function createMachineWithCount($m_number) {
         for($i = 0;$i < $m_number;$i++) {
             $machine = new Machine();
+            $machine->m_index = $i;
             array_push($this->m_machine_arr, $machine);
         }
     }

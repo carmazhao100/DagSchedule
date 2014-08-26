@@ -41,12 +41,18 @@ class EFairnessTool {
                 break;
             }
       //寻找可以解放的node list=====================================
-           $free_machine_arr = array();
+           $free_machine_arr = MachineManager::getInstance()->m_machine_arr;
             unset($target_list_arr);
             $target_list_arr = self::getActiveDagListArray($allocated_node_arr , $dag_list_arr , $dag_arr , $free_machine_arr);
             if(count($allocated_node_arr)) {
                 $next_free_time = $allocated_node_arr[0]->m_finish_time;;
             }
+            
+            /*for($m = 0;$m < count($free_machine_arr);$m++) {
+                if(count($free_machine_arr) > ){
+                 echo "选出来了 " , $free_machine_arr[$m]->m_index , "\n";
+                }
+            }*/
       //构造ready pool
             self::fillReadyPool($ready_pool , $target_list_arr , $dag_list_arr);
        //把现在pool里面的任务都清空掉
@@ -54,25 +60,38 @@ class EFairnessTool {
             echo "现在的ready pool 数目是 " , count($ready_node_list) , "\n";
             while(count($ready_node_list)) {
                if(self::checkAllTheSame($ready_pool)) {
-                   usort($ready_node_list, 'sortBigFirst');
-                   //echo "big\n";
+                  usort($ready_node_list, 'sortBigFirst');
+                   echo "big\n";
                }else{
                   usort($ready_node_list, 'sortSmallFirst');
-                  //echo "small\n";
+                  echo "small\n";
                }
                AlgoTool::distributeSingleNodeOnMachine($ready_node_list[0], $machine_arr,$next_free_time);
+               //删除机器
+               /*$selected_machine_id = $ready_node_list[0]->m_machine_id;
+               $selected_machine = MachineManager::getInstance()->m_machine_arr[$selected_machine_id];
+               $index = array_search($selected_machine, $free_machine_arr);
+               array_splice($free_machine_arr, $index , 1);*/
                //存储已分配的node
                array_push($allocated_node_arr, $ready_node_list[0]);  
                echo "   执行了一个节点:" , $ready_node_list[0]->m_index;
+               //从ready pool里面干掉
+               $node_index_in_pool = array_search($ready_node_list[0] , $ready_pool[$ready_node_list[0]->m_dag->m_index]);
+               array_splice($ready_pool[$ready_node_list[0]->m_dag->m_index], $node_index_in_pool , 1);
                //去除头元素
                array_splice($ready_node_list, 0, 1);
+               
+               //判断机器数目
+               if(count($free_machine_arr) == 0) {
+                   break;
+               }
             }
             //重置ready pool
-            $ready_pool = array();
+           /* $ready_pool = array();
             for($i = 0;$i < count($dag_arr);$i++) {
                 $arr = array();
                 $ready_pool[$i] = $arr;
-            }
+            }*/
            // echo "qqqqq现在daglistarry大小为 " , count($dag_list_arr) , "\n";
         }
     }
@@ -87,13 +106,21 @@ class EFairnessTool {
         return $arr;
     }
     
-    public static function getActiveDagListArray(&$allocated_node_arr , &$dag_list_arr , &$dag_arr , &$machine_arr) {
+    public static function getActiveDagListArray(&$allocated_node_arr , &$dag_list_arr , &$dag_arr , &$free_machine_arr) {
             echo "------------现在开始审查 ALLOCATED NODE  ARRAY\n";
             echo "   Allocated node array 数目是 : " , count($allocated_node_arr) , "\n";
             $target_list_arr = array();
             $next_free_time = 0;
             if(count($allocated_node_arr) == 0) {
                 $next_free_time = MAX_NUMBER;
+                for($i = 0;$i < count($dag_arr);$i++) {
+                    if(count($dag_list_arr[$i]) != 0) {
+                        if($dag_arr[$i]->m_reach_time < $next_free_time) {
+                            $next_free_time = $dag_arr[$i]->m_reach_time;
+                        }
+                    }
+                }
+                echo "这个时间是  " , $next_free_time , "\n";
             }
             if(count($allocated_node_arr)) {
                 //排序
@@ -114,30 +141,28 @@ class EFairnessTool {
                         array_push($target_list_arr, $target_list);
                         echo "________DAG index ：" , $dag_index , "被选入 , 长度为" , count($target_list) , "\n";
                         array_splice($allocated_node_arr, $a , 1);
-                        //如果没了可完成的点
-                        
+                       
                         $a--;
                     }else{
                         break;
                     }
-                    //如果一个都没选到，比如说目标DAG已经空了
-                    
-                   /* if(count($target_list_arr) == 0) {
-                        echo "启动了============================";
-                        for($i = 0;$i < count($dag_list_arr);$i++) {
-                            if($dag_arr[$i]->m_reach_time <= $next_free_time) {
-                                array_push($target_list_arr, $dag_list_arr[$i]);
-                                echo "长度 " , count($dag_list_arr[$i]) , "\n";
+                    //把刚刚到时间的array放进去，否则只能等上一个结束才会执行，相当于插队
+                    for($d = 0;$d < count($dag_list_arr);$d++) {
+                        if(count($dag_list_arr[$d]) == count($dag_arr[$d]->m_node_dic)){
+                            if($dag_arr[$d]->m_reach_time <= $next_free_time) {
+                                $target_list = &$dag_list_arr[$d];
+                                array_push($target_list_arr, $target_list);
+                                echo "________DAG index ：" , $dag_index , "被选入 , 长度为" , count($target_list) , "\n";
                             }
                         }
-                        echo "结束了============================";
-                    }else {
-                        echo "target array list 里面是有东西的！\n";
-                    }*/
+                    }
+                  
                 }
             }else{
                 for($i = 0;$i < count($dag_list_arr);$i++) {
+                    echo "目前时间 : " , $next_free_time , "\n";
                     if($dag_arr[$i]->m_reach_time <= $next_free_time) {
+                        echo "________DAG index ：" , $i , "被选入 , 长度为" , count($dag_list_arr[$i]) , "\n";
                         array_push($target_list_arr, $dag_list_arr[$i]);
                     }
                 }

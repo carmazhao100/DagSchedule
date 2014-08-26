@@ -47,7 +47,7 @@ class DAG {
         printf("start at %d\n", $this->m_entry_node->m_index
                 );
         
-        $current_node = $this->m_entry_node;
+       /* $current_node = $this->m_entry_node;
         
         $node_queue = array();
         array_push($node_queue, $current_node);
@@ -62,6 +62,15 @@ class DAG {
             for($i = 0;$i < count($child_arr);$i++) {
                 $child_node = $child_arr[$i];
                 printf('Child Node is %d\n' , $child_node->m_index);
+            }
+        }*/
+        for($i = 0;$i < count($this->m_node_dic);$i++) {
+            $node = $this->m_node_dic[$i];
+            echo "====NODE " , $node->m_index , "\n";
+            echo "拥有孩子 : \n";
+            for($e = 0;$e < count($node->m_succ_edge_arr);$e++) {
+                $succ_node = $node->m_succ_edge_arr[$e]->m_succ_node;
+                echo "   " , $succ_node->m_index ,"  边长 :",$node->m_succ_edge_arr[$e]->m_cost,"\n";
             }
         }
     }
