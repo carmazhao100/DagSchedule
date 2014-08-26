@@ -12,4 +12,4 @@ const BOTTOM_WIDE = 2;
 
 const MACHINE_NUMBER = 5;
 
-const MAX_NUMBER = 9999999;
+const MAX_NUMBER = PHP_INT_MAX;

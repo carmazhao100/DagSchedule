@@ -14,11 +14,11 @@ require_once 'MultiDAG/RoundRobinTool.php';
 require_once 'MultiDAGDynamic/FIFOTool.php';
 require_once 'MultiDAGDynamic/EFairnessTool.php';
 
-$time_inter_base = 200;
+$time_inter_base = 10;
 function showDagResult($dag_arr) {
     $sum = 0;
     for($i = 0;$i < count($dag_arr);$i++) {
-       // printf("====DAG  %d 的执行时间是： %d\n" , $i , $dag_arr[$i]->m_exit_node->m_finish_time);
+        printf("====DAG  %d 的执行时间是： %d\n" , $i , $dag_arr[$i]->m_exit_node->m_finish_time);
         $sum += ($dag_arr[$i]->m_exit_node->m_finish_time - $dag_arr[$i]->m_reach_time);
     }
     echo "平均值 : ",$sum/count($dag_arr) , "\n";
@@ -26,7 +26,7 @@ function showDagResult($dag_arr) {
 //创造dag
 $dag_arr = array();
 for($i = 0;$i < 7;$i++) {
-    $dag = DataManager::getInstance()->createOneDagWithParam(10,MIDDLE_WIDE , MACHINE_NUMBER);
+    $dag = DataManager::getInstance()->createOneDagWithParam(6,MIDDLE_WIDE , MACHINE_NUMBER);
     $dag->m_index = $i;
     $dag_arr[$i] = $dag;
     $dag->m_reach_time = $i * $time_inter_base;

@@ -43,7 +43,7 @@ class EFairnessTool {
       //寻找可以解放的node list=====================================
            $free_machine_arr = MachineManager::getInstance()->m_machine_arr;
             unset($target_list_arr);
-            $target_list_arr = self::getActiveDagListArray($allocated_node_arr , $dag_list_arr , $dag_arr , $free_machine_arr);
+            $target_list_arr = self::getActiveDagListArray($allocated_node_arr , $dag_list_arr , $dag_arr , $free_machine_arr , $next_free_time);
             if(count($allocated_node_arr)) {
                 $next_free_time = $allocated_node_arr[0]->m_finish_time;;
             }
@@ -106,10 +106,11 @@ class EFairnessTool {
         return $arr;
     }
     
-    public static function getActiveDagListArray(&$allocated_node_arr , &$dag_list_arr , &$dag_arr , &$free_machine_arr) {
+    public static function getActiveDagListArray(&$allocated_node_arr , &$dag_list_arr , &$dag_arr , &$free_machine_arr , &$next_free_time) {
             echo "------------现在开始审查 ALLOCATED NODE  ARRAY\n";
             echo "   Allocated node array 数目是 : " , count($allocated_node_arr) , "\n";
             $target_list_arr = array();
+            //确定时间
             $next_free_time = 0;
             if(count($allocated_node_arr) == 0) {
                 $next_free_time = MAX_NUMBER;
@@ -146,17 +147,17 @@ class EFairnessTool {
                     }else{
                         break;
                     }
-                    //把刚刚到时间的array放进去，否则只能等上一个结束才会执行，相当于插队
-                    for($d = 0;$d < count($dag_list_arr);$d++) {
-                        if(count($dag_list_arr[$d]) == count($dag_arr[$d]->m_node_dic)){
+                }
+                //把刚刚到时间的array放进去，否则只能等上一个结束才会执行，相当于插队
+                for($d = 0;$d < count($dag_list_arr);$d++) {
+                    if(count($dag_list_arr[$d]) == count($dag_arr[$d]->m_node_dic)){
                             if($dag_arr[$d]->m_reach_time <= $next_free_time) {
-                                $target_list = &$dag_list_arr[$d];
-                                array_push($target_list_arr, $target_list);
-                                echo "________DAG index ：" , $dag_index , "被选入 , 长度为" , count($target_list) , "\n";
-                            }
+                            echo "特殊\n";
+                            $target_list = &$dag_list_arr[$d];
+                            array_push($target_list_arr, $target_list);
+                            echo "________DAG index ：" , $dag_index , "被选入 , 长度为" , count($target_list) , "\n";
                         }
-                    }
-                  
+                    }                    
                 }
             }else{
                 for($i = 0;$i < count($dag_list_arr);$i++) {
