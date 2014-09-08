@@ -7,6 +7,8 @@
  */
 
 class Node {
+    //本节点是否 未分配，未分配记为true
+    public $m_active;
     //每个节点的花费
     public  $m_cost;
     //cost字典,在不同机器上的cost
@@ -38,6 +40,7 @@ class Node {
     
     //构造+初始化
     public function __construct() {
+        $this->m_active = true;
         $this->m_cost = 0;
         $this->m_cost_arr = array();
         $this->m_index = 0;

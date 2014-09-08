@@ -17,16 +17,9 @@ class AlgoTool {
         $entry_node = $dag->m_entry_node;
         //标注
         self::countPriorityUpward($entry_node);
-        $current_node = $dag->m_exit_node;
-        $node_queue = array();
-        array_push($node_queue, $current_node);
-        while(count($node_queue)) {
-            $current_node = array_shift($node_queue);
-        }
-        
         $value_arr = array_values($dag->m_node_dic);
         usort($value_arr, 'sortByUpwardValue');
-        
+
         return $value_arr;
     }
     //输入DAG 返回CPOP的队列array
@@ -44,6 +37,7 @@ class AlgoTool {
     //递归调用计算upward
     public static function countPriorityUpward($node) {
         if($node->m_up_ward_value >= 0) {
+          //  echo "到了可以返回了\n";
             return $node->m_up_ward_value;
         }
         
@@ -53,6 +47,7 @@ class AlgoTool {
         for($i = 0;$i < count($succ_edge_arr);$i++) {
             $succ_edge = $succ_edge_arr[$i];
             $succ_node = $succ_edge->m_succ_node;
+            echo "到了 " , $succ_node->m_index , "是" , $node->m_index , "的孩子\n";
             $childe_cost = self::countPriorityUpward($succ_node);
            // printf("xxxxx  孩子 : %d  cost: %d\n" , $succ_node->m_index , $succ_node->m_up_ward_value);
             if($childe_cost + $succ_edge->m_cost > $max_value) {
@@ -74,9 +69,8 @@ class AlgoTool {
         $pre_edge_arr = $node->m_pre_edge_arr;
         for($i = 0;$i < count($pre_edge_arr);$i++) {
             $pre_edge = $pre_edge_arr[$i];
-            $pre_node = $pre_edge->m_succ_node;
+            $pre_node = $pre_edge->m_pre_node;
             $parent_cost = self::countPriorityDownward($pre_node);
-           // printf("xxxxx  孩子 : %d  cost: %d\n" , $succ_node->m_index , $succ_node->m_up_ward_value);
             if($parent_cost + $pre_edge->m_cost > $max_value) {
                 $max_value = $parent_cost + $pre_edge->m_cost;
             }

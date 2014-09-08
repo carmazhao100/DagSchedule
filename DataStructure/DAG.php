@@ -77,10 +77,46 @@ class DAG {
     
     public function resetAllNodes() {
         $this->m_reach_time = 0;
-        $this->m_index = 0;
         $node_arr = array_values($this->m_node_dic);
         for($i = 0;$i < count($node_arr);$i++) {
             $node_arr[$i]->resetAllProperties();
+        }
+    }
+    
+    public function clearAllNodesValues() {
+        $node_arr = array_values($this->m_node_dic);
+        for($i = 0;$i < count($node_arr);$i++) {
+            $node_arr[$i]->m_down_ward_value = -1;
+            $node_arr[$i]->m_up_ward_value = -1;
+        }
+        $this->m_entry_node->m_down_ward_value = 0;
+        $this->m_exit_node->m_up_ward_value = 0;
+    }
+    
+    public function removeNode($node) {
+        //从之前的里面磨灭他
+        $pre_edge_arr = $node->m_pre_edge_arr;
+        for($i = 0;$i < count($pre_edge_arr);$i++) {
+            $edge = $pre_edge_arr[$i];
+            $pre_node = $edge->m_pre_node;
+            $pre_succ_edge_arr = $pre_node->m_succ_edge_arr;
+            for($j = 0;$j < count($pre_succ_edge_arr);$j++) {
+                if($pre_succ_edge_arr[$j]->m_succ_node == $node) {
+                    array_splice($pre_node->m_succ_edge_arr, $j , 1);
+                }
+            }
+        }
+        //从之后的里面磨灭他
+        $succ_edge_arr = $node->m_succ_edge_arr;
+        for($i = 0;$i < count($succ_edge_arr);$i++) {
+            $edge = $succ_edge_arr[$i];
+            $succ_node = $edge->m_succ_node;
+            $succ_pre_edge_arr = $succ_node->m_pre_edge_arr;
+            for($j = 0;$j < count($succ_pre_edge_arr);$j++) {
+                if($succ_pre_edge_arr[$j]->m_pre_node == $node) {
+                    array_splice($succ_node->m_pre_edge_arr, $j , 1);
+                }
+            }
         }
     }
 }
