@@ -15,7 +15,7 @@ require_once 'MultiDAGDynamic/FIFOTool.php';
 require_once 'MultiDAGDynamic/MyAlgoTool.php';
 require_once 'MultiDAGDynamic/EFairnessTool.php';
 
-$time_inter_base = 100;
+$time_inter_base = 20;
 function showDagResult($dag_arr) {
     $sum = 0;
     for($i = 0;$i < count($dag_arr);$i++) {
@@ -27,7 +27,7 @@ function showDagResult($dag_arr) {
 //创造dag
 $dag_arr = array();
 for($i = 0;$i < 7;$i++) {
-    $dag = DataManager::getInstance()->createOneDagWithParam(2,MIDDLE_WIDE , MACHINE_NUMBER);
+    $dag = DataManager::getInstance()->createOneDagWithParam(4,MIDDLE_WIDE , MACHINE_NUMBER);
     $dag->m_index = $i;
     $dag_arr[$i] = $dag;
     $dag->m_reach_time = $i * $time_inter_base;

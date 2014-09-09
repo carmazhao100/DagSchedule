@@ -10,6 +10,7 @@ require_once 'DataStructure/Node.php';
 require_once 'DataStructure/Edge.php';
 require_once 'Machine/MachineManager.php';
 require_once 'AlgoTool.php';
+require_once 'SortFunctions.php';
 
 class FIFOTool {
     public static function runDAGArray($dag_arr , $machine_arr) {
@@ -29,6 +30,3 @@ class FIFOTool {
     } 
 }
 
-function sortByReachTimeValue($dag_1 , $dag_2) {
-    return $dag_1->m_reach_time > $dag_2->m_reach_time?1:-1;
-}

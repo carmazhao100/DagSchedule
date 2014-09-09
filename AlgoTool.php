@@ -10,6 +10,7 @@ require_once 'DataStructure/Edge.php';
 require_once 'DataManager.php';
 require_once 'Machine/TimeSegment.php';
 require_once 'Global.php';
+require_once 'SortFunctions.php';
 
 class AlgoTool {
     //输入DAG 返回HEFT的队列array
