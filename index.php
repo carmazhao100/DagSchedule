@@ -27,7 +27,7 @@ function showDagResult($dag_arr) {
 //创造dag
 $dag_arr = array();
 for($i = 0;$i < 7;$i++) {
-    $dag = DataManager::getInstance()->createOneDagWithParam(4,MIDDLE_WIDE , MACHINE_NUMBER);
+    $dag = DataManager::getInstance()->createOneDagWithParam(8,MIDDLE_WIDE , MACHINE_NUMBER);
     $dag->m_index = $i;
     $dag_arr[$i] = $dag;
     $dag->m_reach_time = $i * $time_inter_base;

@@ -67,7 +67,7 @@ class EFairnessTool {
                   usort($ready_node_list, 'sortSmallFirst');
                   //echo "small\n";
                }
-               AlgoTool::distributeSingleNodeOnMachine($ready_node_list[0], $machine_arr,$next_free_time);
+               AlgoTool::distributeSingleNodeOnMachine($ready_node_list[0], $machine_arr,$ready_node_list[0]->m_dag->m_reach_time);
                //删除机器
                /*$selected_machine_id = $ready_node_list[0]->m_machine_id;
                $selected_machine = MachineManager::getInstance()->m_machine_arr[$selected_machine_id];
